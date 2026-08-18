@@ -1,10 +1,31 @@
 <!doctype html>
 <meta charset="utf-8">
 <title>Uyqur</title>
-<div id="app">Yuklanmoqda…</div>
+<style>
+  body { font-family: system-ui, sans-serif; padding: 24px; }
+  .row { display: flex; align-items: center; gap: 8px; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; background: #999; }
+  .dot.green { background: #2f9e44; }
+  .dot.red   { background: #d64545; }
+</style>
+<h1>Uyqur</h1>
+<div class="row">
+  <span id="dot" class="dot" title="Tekshirilmoqda…"></span>
+  <span id="status-label">Tekshirilmoqda…</span>
+</div>
+<p id="app">Yuklanmoqda…</p>
 <script type="module">
   import { renderHome, loadMessage } from './home.js';
-  const state = await loadMessage(fetch);
-  const view = renderHome(state);
+  import { loadStatus, toIndicator } from './status.js';
+
+  const api = (path) => fetch(`http://localhost:3000${path}`);
+
+  const view = renderHome(await loadMessage(api));
   document.getElementById('app').textContent = view.body;
+
+  const indicator = toIndicator(await loadStatus(api));
+  const dot = document.getElementById('dot');
+  dot.classList.add(indicator.color);
+  dot.title = indicator.label;
+  document.getElementById('status-label').textContent = indicator.label;
 </script>
