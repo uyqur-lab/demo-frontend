@@ -1,0 +1,10 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Uyqur</title>
+<div id="app">Yuklanmoqda…</div>
+<script type="module">
+  import { renderHome, loadMessage } from './home.js';
+  const state = await loadMessage(fetch);
+  const view = renderHome(state);
+  document.getElementById('app').textContent = view.body;
+</script>
