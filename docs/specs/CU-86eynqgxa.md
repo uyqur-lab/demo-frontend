@@ -25,6 +25,7 @@ Foydalanuvchi sifatida men server ishlayotganini bir qarashda ko'rmoqchiman.
 - AC-5 [MB] EVENT: QACHONKI asosiy ekran ochilsa, `/api/status` so'raladi va `status` = `ok` bo'lsa AppBar o'ng tomonida yashil indikator ko'rsatiladi
 - AC-6 [MB] UNWANTED: AGAR so'rov yiqilsa yoki `status` ≠ `ok` bo'lsa, qizil indikator ko'rsatiladi
 - AC-7 [MB] manual: indikator rangi kunduzgi yorug'likda ajralib turadi
+- AC-8 [FE] manual: bosh sahifa yorug' va qorong'i rejimda ham o'qiladi (matn/fon kontrasti ≥ 4.5:1)
 
 ## Qarorlar (PM tasdiqlagan)
 
