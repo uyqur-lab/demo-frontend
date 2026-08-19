@@ -2,58 +2,31 @@
 <meta charset="utf-8">
 <title>Uyqur</title>
 <style>
-  /* AC-8: sahifa o'z rangini o'zi belgilaydi — brauzer mavzusiga tayanmaydi. */
+  /* Sahifa o'z rangini o'zi belgilaydi — brauzer mavzusiga tayanmaydi. */
   :root {
     --bg: #ffffff;
     --ink: #16181d;
     --muted: #5b6270;
-    --dot-idle: #9aa0aa;
+    --line: #d8dbe2;
+    --accent: #2f6fed;
+    --err: #d64545;
   }
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #14161a;
       --ink: #e6e9ee;
       --muted: #a2a9b5;
-      --dot-idle: #6b7280;
+      --line: #2b2f36;
+      --accent: #6f9bff;
+      --err: #ff7a7a;
     }
   }
-
   body {
-    margin: 0;
-    padding: 24px;
-    background: var(--bg);
-    color: var(--ink);
+    margin: 0; padding: 24px; background: var(--bg); color: var(--ink);
     font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
   }
   h1 { font-size: 24px; margin: 0 0 16px; }
-  .row { display: flex; align-items: center; gap: 8px; }
-  #status-label { color: var(--muted); }
-  #app { color: var(--ink); }
-  .dot {
-    width: 12px; height: 12px; border-radius: 50%;
-    background: var(--dot-idle); flex: none;
-  }
-  .dot.green { background: #2f9e44; }
-  .dot.red   { background: #d64545; }
+  p { color: var(--muted); }
 </style>
 <h1>Uyqur</h1>
-<div class="row">
-  <span id="dot" class="dot" title="Tekshirilmoqda…"></span>
-  <span id="status-label">Tekshirilmoqda…</span>
-</div>
-<p id="app">Yuklanmoqda…</p>
-<script type="module">
-  import { renderHome, loadMessage } from './home.js';
-  import { loadStatus, toIndicator } from './status.js';
-
-  const api = (path) => fetch(`http://localhost:3000${path}`);
-
-  const view = renderHome(await loadMessage(api));
-  document.getElementById('app').textContent = view.body;
-
-  const indicator = toIndicator(await loadStatus(api));
-  const dot = document.getElementById('dot');
-  dot.classList.add(indicator.color);
-  dot.title = indicator.label;
-  document.getElementById('status-label').textContent = indicator.label;
-</script>
+<p>Bo'sh sahifa. Funksiya hali qo'shilmagan.</p>
