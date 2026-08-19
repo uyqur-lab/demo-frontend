@@ -1,6 +1,6 @@
 <!doctype html>
 <meta charset="utf-8">
-<title>Uyqur — Salomlashish</title>
+<title>Uyqur</title>
 <style>
   /* Sahifa o'z rangini o'zi belgilaydi — brauzer mavzusiga tayanmaydi. */
   :root {
@@ -53,6 +53,20 @@
   }
   #result.ok    { background: var(--ok-bg); }
   #result.error { background: var(--err-bg); color: var(--err); }
+
+  hr { border: 0; border-top: 1px solid var(--line); margin: 32px 0; }
+
+  /* Rang bo'limi */
+  .color-row { display: flex; align-items: center; gap: 14px; margin-top: 20px; }
+  #swatch {
+    /* O'lcham va radius kontraktda: 48x48, radius 8 (backend.md). */
+    flex: none; border: 1px solid var(--line);
+  }
+  #code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 15px;
+  }
+  #code.error { color: var(--err); }
 </style>
 
 <h1>Salomlashish</h1>
@@ -72,8 +86,21 @@
 
 <div id="result" aria-live="polite"></div>
 
+<hr>
+
+<h1>Tasodifiy rang</h1>
+<p class="hint">GET /api/v1/color — har chaqiruvda yangi hex kod.</p>
+
+<button id="get-color">Rang ol</button>
+
+<div class="color-row">
+  <div id="swatch"></div>
+  <span id="code" aria-live="polite"></span>
+</div>
+
 <script type="module">
   import { sendHi } from './hi.js';
+  import { loadColor } from './color.js';
 
   // Standart manzil kontraktda ko'rsatilgani — backend.md → "Server manzili".
   // Lokal tekshiruvda port band bo'lsa `?api=http://localhost:3001` bilan
@@ -103,5 +130,33 @@
     out.className = view.kind;
     out.textContent = view.text;
     btn.disabled = false;
+  });
+
+  // --- Tasodifiy rang ---
+
+  const colorBtn = document.getElementById('get-color');
+  const swatch = document.getElementById('swatch');
+  const code = document.getElementById('code');
+
+  colorBtn.addEventListener('click', async () => {
+    colorBtn.disabled = true;
+    code.className = '';
+    code.textContent = 'Olinmoqda…';
+
+    const view = await loadColor(api);
+
+    // Kod matni o'zgartirilmaydi: `#` qo'shilmaydi, registr tegilmaydi.
+    // Rang esa view.style ichida `#` bilan quriladi — ikki alohida narsa
+    // (backend.md → "Kod matni — o'zgartirmang").
+    code.className = view.kind === 'error' ? 'error' : '';
+    code.textContent = view.text;
+
+    if (view.style) {
+      Object.assign(swatch.style, view.style);
+    } else {
+      swatch.style.background = 'transparent';
+    }
+
+    colorBtn.disabled = false;
   });
 </script>
