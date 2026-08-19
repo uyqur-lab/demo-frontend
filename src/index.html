@@ -1,6 +1,6 @@
 <!doctype html>
 <meta charset="utf-8">
-<title>Uyqur</title>
+<title>Uyqur — Salomlashish</title>
 <style>
   /* Sahifa o'z rangini o'zi belgilaydi — brauzer mavzusiga tayanmaydi. */
   :root {
@@ -9,7 +9,9 @@
     --muted: #5b6270;
     --line: #d8dbe2;
     --accent: #2f6fed;
-    --err: #d64545;
+    --err: #c92a2a;
+    --ok-bg: #f1f6ff;
+    --err-bg: #fff5f5;
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -18,15 +20,88 @@
       --muted: #a2a9b5;
       --line: #2b2f36;
       --accent: #6f9bff;
-      --err: #ff7a7a;
+      --err: #ff8787;
+      --ok-bg: #1a2230;
+      --err-bg: #2a1c1c;
     }
   }
   body {
     margin: 0; padding: 24px; background: var(--bg); color: var(--ink);
     font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    max-width: 480px;
   }
-  h1 { font-size: 24px; margin: 0 0 16px; }
-  p { color: var(--muted); }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .hint { color: var(--muted); font-size: 13px; margin: 0 0 20px; }
+  label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+  input[type=text] {
+    width: 100%; box-sizing: border-box; padding: 10px 12px; font-size: 15px;
+    border: 1px solid var(--line); border-radius: 8px;
+    background: var(--bg); color: var(--ink);
+  }
+  input[type=text]:disabled { opacity: .5; }
+  .check { display: flex; align-items: center; gap: 8px; margin: 12px 0 16px; }
+  .check label { margin: 0; font-size: 13px; color: var(--ink); }
+  button {
+    padding: 10px 18px; font-size: 15px; border: 0; border-radius: 8px;
+    background: var(--accent); color: #fff; cursor: pointer;
+  }
+  button:disabled { opacity: .6; cursor: default; }
+  #result {
+    margin-top: 20px; padding: 14px; border-radius: 8px; min-height: 20px;
+    border: 1px solid var(--line); white-space: pre-wrap;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 14px;
+  }
+  #result.ok    { background: var(--ok-bg); }
+  #result.error { background: var(--err-bg); color: var(--err); }
 </style>
-<h1>Uyqur</h1>
-<p>Bo'sh sahifa. Funksiya hali qo'shilmagan.</p>
+
+<h1>Salomlashish</h1>
+<p class="hint">POST /api/v1/hi — ism yuboriladi, <code>hi {name}</code> qaytadi.</p>
+
+<label for="name">Ism</label>
+<input id="name" type="text" placeholder="Alisher" value="Alisher">
+
+<div class="check">
+  <input id="omit" type="checkbox">
+  <!-- Bo'sh input bo'sh matn yuboradi, `null` emas. 400 yo'lini sinash uchun
+       `name` maydonini butunlay yubormaydigan boshqaruv kerak (doc.md). -->
+  <label for="omit">name yubormaslik (tana <code>{}</code> bo'ladi)</label>
+</div>
+
+<button id="send">Yubor</button>
+
+<div id="result" aria-live="polite"></div>
+
+<script type="module">
+  import { sendHi } from './hi.js';
+
+  // Standart manzil kontraktda ko'rsatilgani — backend.md → "Server manzili".
+  // Lokal tekshiruvda port band bo'lsa `?api=http://localhost:3001` bilan
+  // almashtirish mumkin.
+  const BASE = new URLSearchParams(location.search).get('api')
+    ?? 'http://localhost:3000';
+
+  const api = (path, opts) => fetch(`${BASE}${path}`, opts);
+
+  const nameEl = document.getElementById('name');
+  const omitEl = document.getElementById('omit');
+  const btn = document.getElementById('send');
+  const out = document.getElementById('result');
+
+  omitEl.addEventListener('change', () => { nameEl.disabled = omitEl.checked; });
+
+  btn.addEventListener('click', async () => {
+    btn.disabled = true;
+    out.className = '';
+    out.textContent = 'Yuborilmoqda…';
+
+    const view = await sendHi(api, {
+      name: nameEl.value,
+      omitName: omitEl.checked,
+    });
+
+    out.className = view.kind;
+    out.textContent = view.text;
+    btn.disabled = false;
+  });
+</script>
